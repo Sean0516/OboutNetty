@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property resource="logback.properties"/>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <encoder>
+            <pattern>%d [%t] %p %logger - %m%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <appender name="LogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>logs/${log.name}.log</File>
+    <Append>true</Append>
+    <encoder>
+    <pattern>%d [%t] %p %logger{0} - %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+    <level>DEBUG</level>
+    </filter>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+    <!-- 每天一归档 -->
+    <fileNamePattern>C:/log/${log.name}-%d{yyyy-MM-dd}-%i.log.zip</fileNamePattern>
+    <maxFileSize>48MB</maxFileSize>
+    <maxHistory>31</maxHistory>
+    <totalSizeCap>10GB</totalSizeCap>
+    </rollingPolicy>
+    </appender>
+
+    <logger name="com.logback" level="DEBUG"/>
+    <logger name="com.apache.sshd" level="DEBUG"/>
+    <root level="DEBUG">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="LogFile"/>
+    </root>
+
+</configuration>
