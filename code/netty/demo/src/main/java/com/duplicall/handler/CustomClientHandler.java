@@ -2,9 +2,7 @@ package com.duplicall.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +23,14 @@ public class CustomClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Hello Netty Server", CharsetUtil.UTF_8));
+        ChannelFuture future = ctx.writeAndFlush(Unpooled.copiedBuffer("Hello Netty Server", CharsetUtil.UTF_8));
+        future.addListeners((ChannelFutureListener) channelFuture -> {
+            if (channelFuture.isSuccess()){
+                logger.info("send msg to server success ");
+            }else {
+                logger.error("send msg to server error as [{}]",channelFuture.cause().getMessage());
+            }
+        });
     }
 
     /**
@@ -37,6 +42,7 @@ public class CustomClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception {
         logger.info("client received   msg [{}]",byteBuf.toString(CharsetUtil.UTF_8));
+        channelHandlerContext.channel().close();
     }
 
     /**
@@ -49,6 +55,6 @@ public class CustomClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
         logger.error("server error as [{}]",cause.getMessage(),cause);
-        ctx.close();
+        super.exceptionCaught(ctx,cause);
     }
 }

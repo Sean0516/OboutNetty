@@ -1,6 +1,7 @@
 package com.duplicall.client;
 
 import com.duplicall.handler.CustomClientHandler;
+import com.duplicall.handler.CustomClientOutHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -30,7 +31,8 @@ public class NettyClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new CustomClientHandler());
+                        socketChannel.pipeline().addLast(new CustomClientOutHandler())
+                                .addLast(new CustomClientHandler());
                     }
                 });
         try {

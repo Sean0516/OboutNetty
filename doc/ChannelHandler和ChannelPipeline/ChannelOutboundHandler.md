@@ -17,3 +17,53 @@ hannelOutboundHandler  的一个强大的功能是可以按需推迟操作或者
 
 ChannelPromise 与channelFuture  ChananelOutboundHandler 中的大部分方法都需要一个channelPromise 参数，以便在操作完成时得到通知。channelPromise 是channelFuture 的一个子类。 其定义了一些可写的方法。 如setSuccess 和 setFailure 从而使 channelFuture 不可变
 
+```java
+public class CustomClientOutHandler extends ChannelOutboundHandlerAdapter {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Override
+    public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) throws Exception {
+        logger.info("remote addr [{}]  connect success promise [{}]", remoteAddress.toString(), promise.isSuccess());
+        super.connect(ctx, remoteAddress, localAddress, promise);
+    }
+
+    @Override
+    public void bind(ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise) throws Exception {
+        logger.info("local addr bind [{}] ", localAddress.toString());
+        super.bind(ctx, localAddress, promise);
+    }
+
+    @Override
+    public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
+        logger.info("dis connect [{}]", ctx.channel().remoteAddress().toString());
+        super.disconnect(ctx, promise);
+    }
+
+    @Override
+    public void close(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
+        logger.info("channel close ");
+        super.close(ctx, promise);
+    }
+
+    @Override
+    public void deregister(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
+        logger.info("channel de register ");
+        super.deregister(ctx, promise);
+    }
+
+    @Override
+    public void read(ChannelHandlerContext ctx) throws Exception {
+        super.read(ctx);
+    }
+
+    @Override
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+        logger.info("msg [{}]", msg);
+        super.write(ctx, msg, promise);
+    }
+
+    @Override
+    public void flush(ChannelHandlerContext ctx) throws Exception {
+        super.flush(ctx);
+    }
+```
