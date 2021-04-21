@@ -31,6 +31,7 @@ public class CustomClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
                 logger.error("send msg to server error as [{}]",channelFuture.cause().getMessage());
             }
         });
+        ctx.channel().eventLoop().execute(() -> logger.info("do event loop "));
     }
 
     /**

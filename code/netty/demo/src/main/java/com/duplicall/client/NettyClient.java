@@ -23,11 +23,15 @@ import java.net.InetSocketAddress;
 public class NettyClient {
     public void startClient(String host, int port) throws InterruptedException {
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+//        创建一个Boostrap 实例用以创建和连接新的客户端channel
         Bootstrap bootstrap = new Bootstrap();
+//        设置EventLoopGroup 提供用于处理channel 事件的EventLoop
         bootstrap.group(eventLoopGroup)
+//                指定要使用的channel 实现
                 .channel(NioSocketChannel.class)
                 .remoteAddress(new InetSocketAddress(host, port))
                 .option(ChannelOption.SO_KEEPALIVE,true)
+//                设hi在channelHandler
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
@@ -36,6 +40,7 @@ public class NettyClient {
                     }
                 });
         try {
+//            连接到远程主机
             ChannelFuture channelFuture = bootstrap.connect().sync();
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
